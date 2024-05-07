@@ -21,57 +21,63 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class createAccount extends AppCompatActivity {
 
-    EditText emailtext,passwordtext,c_passwordtext;
-    MaterialButton create_act;
-    TextView login;
+public class login extends AppCompatActivity {
+    EditText emailtext,passwordtext;
+    MaterialButton login_btn;
+    TextView createact;
     ProgressBar load;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_create_account);
+        setContentView(R.layout.activity_login);
 
         emailtext = findViewById(R.id.email);
         passwordtext = findViewById(R.id.password);
-        c_passwordtext = findViewById(R.id.c_password);
-        create_act = findViewById(R.id.create_accountBtn);
-        login = findViewById(R.id.gotologin_text);
+        login_btn = findViewById(R.id.login_accountBtn);
+        createact = findViewById(R.id.gotoregister_text);
         load = findViewById(R.id.progressbar);
 
-        create_act.setOnClickListener(v-> create_Account());
-        login.setOnClickListener(v->startActivity(new Intent(this,login.class)));
+        login_btn.setOnClickListener(v->loginUser());
+        createact.setOnClickListener(v->startActivity(new Intent(this,createAccount.class)));
 
 
     }
-    void create_Account(){
+    void loginUser(){
         String email = emailtext.getText().toString();
         String password = passwordtext.getText().toString();
-        String c_password = c_passwordtext.getText().toString();
 
-        boolean is_valid = validateData(email,password,c_password);
+
+        boolean is_valid = validateData(email,password);
         if(!is_valid){
             return;
         }
-        createAccountInFireBase(email,password);
+        loginAccountInFireBase(email,password);
     }
-    void createAccountInFireBase(String email, String password){
-        changeProgressBar(true);
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(createAccount.this,
+    void loginAccountInFireBase(String email, String password) {
+        changeProgressBar(true);
+        FirebaseAuth firebaseAuth =FirebaseAuth.getInstance();
+
+        firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(login.this,
                 new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         changeProgressBar(false);
                         if(task.isSuccessful()){
-                            Utility.showToast(createAccount.this,"Account created successfully");
-                            firebaseAuth.getCurrentUser().sendEmailVerification();
-                            firebaseAuth.signOut();
+                            if(firebaseAuth.getCurrentUser().isEmailVerified()){
+                                startActivity(new Intent(login.this,MainActivity.class));
+                                finish();
+                            }else{
+                                Utility.showToast(login.this,
+                                        "Email Not Verified!Please Verify Your Email");
+                            }
                         }else{
-                            Utility.showToast(createAccount.this,task.getException().getLocalizedMessage());
+                            Utility.showToast(login.this,task.getException().getLocalizedMessage());
                         }
                     }
                 });
@@ -80,24 +86,21 @@ public class createAccount extends AppCompatActivity {
     void changeProgressBar(boolean inProgress){
         if(inProgress){
             load.setVisibility(View.VISIBLE);
-            create_act.setVisibility(View.GONE);
+            login_btn.setVisibility(View.GONE);
         }else{
             load.setVisibility(View.GONE);
-            create_act.setVisibility(View.VISIBLE);
+            login_btn.setVisibility(View.VISIBLE);
         }
     }
 
-    boolean validateData(String email, String password, String c_password) {
-        if (email.isEmpty() || password.isEmpty() || c_password.isEmpty()) {
+    boolean validateData(String email, String password) {
+        if (email.isEmpty() || password.isEmpty()) {
             return false;
         }
         if (password.length() < 7) {
             return false;
         }
-        if (!password.equals(c_password)) {
-            c_passwordtext.setError("Password does not match");
-            return false;
-        }
+
         return true;
     }
 }
