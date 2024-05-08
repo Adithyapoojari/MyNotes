@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/teal</item>
         <item name="colorOnPrimary">@color/white</item>
 
-        <item name="android:statusBarColor" tools:minimumApiLevel="12">@color/teal</item>
+        <item name="android:statusBarColor" tools:minimumApiLevel="l">@color/black</item>
     </style>
 
     <style name="Theme.MyNotes" parent="Base.Theme.MyNotes" />
