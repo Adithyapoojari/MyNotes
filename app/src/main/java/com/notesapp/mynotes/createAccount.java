@@ -70,7 +70,7 @@ public class createAccount extends AppCompatActivity {
                             Utility.showToast(createAccount.this,"Account created successfully! Check Email For Verification");
                             firebaseAuth.getCurrentUser().sendEmailVerification();
                             firebaseAuth.signOut();
-                            startActivity(new Intent(createAccount.this,login.class));
+                            startActivity(new Intent(createAccount.this,login.class)); 
                         }else{
                             Utility.showToast(createAccount.this,task.getException().getLocalizedMessage());
                         }
@@ -92,7 +92,8 @@ public class createAccount extends AppCompatActivity {
         if (email.isEmpty() || password.isEmpty() || c_password.isEmpty()) {
             return false;
         }
-        if (password.length() < 7) {
+        if (password.length() < 7 || c_password.length()<7) {
+            passwordtext.setError("Password must be at least 7 characters");
             return false;
         }
         if (!password.equals(c_password)) {

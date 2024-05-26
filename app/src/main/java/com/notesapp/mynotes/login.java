@@ -98,6 +98,7 @@ public class login extends AppCompatActivity {
             return false;
         }
         if (password.length() < 7) {
+            passwordtext.setError("Password is constrained to more than 7 characters");
             return false;
         }
 
