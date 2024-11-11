@@ -1,10 +1,18 @@
 package com.notesapp.mynotes;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.os.Handler;
+import android.os.Looper;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -13,16 +21,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.Locale;
+
 public class notedetails extends AppCompatActivity {
 
-    EditText titleText, contentText;
-    ImageView saveButton;
-    TextView titletext,detelenote;
+    EditText titletext, contentText;
+    ImageView saveButton, detelenote, backBtn, shareBtn;
     String title,content,docId;
     Boolean isEditMode = false;
+    FloatingActionButton voice;
+    Boolean isSpeaking = false;
+    TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,42 +43,126 @@ public class notedetails extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_notedetails);
 
-        titleText = findViewById(R.id.notes_title);
+        titletext = findViewById(R.id.notes_title);
         contentText = findViewById(R.id.contenttext);
         saveButton = findViewById(R.id.saveBtn);
+        shareBtn = findViewById(R.id.shareBtn);
 
-        titletext = findViewById(R.id.page_title);
+
+        backBtn = findViewById(R.id.backBtn);
         detelenote = findViewById(R.id.deleteBtn);
+
+        voice = findViewById(R.id.voiceBtn);
 
         //recieve data from intent from note details
         title = getIntent().getStringExtra("noteid");
         content = getIntent().getStringExtra("notecontent");
         docId = getIntent().getStringExtra("docId");
 
+
+
+        backBtn.setOnClickListener(v -> {
+
+            if (textToSpeech != null && textToSpeech.isSpeaking()) {
+                textToSpeech.stop();
+            }
+            startActivity(new Intent(this, MainActivity.class));
+        });
+
+
         if(docId!=null && !docId.isEmpty()){
             isEditMode = true;
         }
 
         if(isEditMode){
-            titleText.setText("Edit Your Note");
             detelenote.setVisibility(View.VISIBLE);
-
+            voice.setVisibility(View.VISIBLE);
+            shareBtn.setVisibility(View.VISIBLE);
         }
 
-        titleText.setText(title);
+        titletext.setText(title);
         contentText.setText(content);
+        contentText.setMovementMethod(new ScrollingMovementMethod());
 
         saveButton.setOnClickListener(v->saveNote());
-        detelenote.setOnClickListener(v -> deleteNoteFromFireBase());
+        detelenote.setOnClickListener(v -> showDeleteConfirmationDialog());
+        shareBtn.setOnClickListener(view -> shareAsText());
+
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    textToSpeech.setLanguage(Locale.US); // Set language; adjust as needed
+                } else {
+                    Toast.makeText(notedetails.this, "Text-to-Speech initialization failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        voice.setOnClickListener(v -> speakText());
+
+    }
+
+    private void shareAsText() {
+
+        String textToShare = contentText.getText().toString();
+
+        // Create the sharing intent
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
+
+        // Start the share chooser
+        startActivity(Intent.createChooser(shareIntent, "Share note with"));
+    }
+
+    private void speakText() {
+        if (isSpeaking) {
+            // Stop TTS if it's currently speaking
+            textToSpeech.stop();
+            isSpeaking = false;
+        } else {
+            // Start speaking the text
+            String text = contentText.getText().toString();
+            if (!text.isEmpty()) {
+                // Speak the text
+                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+                isSpeaking = true;
+
+                // Delay setting isSpeaking to false after speech is likely done
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    isSpeaking = false;
+                }, 2000); // Adjust time delay based on average speaking time
+            } else {
+                Toast.makeText(this, "Content is empty", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+
+    void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(notedetails.this);
+        builder.setTitle("Delete Note");
+        builder.setMessage("Are you sure you want to delete this note?");
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            deleteNoteFromFireBase();
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
     void saveNote(){
-        String title = titleText.getText().toString();
+        String title = titletext.getText().toString();
         String content = contentText.getText().toString();
 
-        if(title.isEmpty() || title==null){
-            titleText.setError("Title Is Required!");
+        if(title.isEmpty()){
+            titletext.setError("Title Is Required!");
             return;
         }
 
@@ -113,5 +210,14 @@ public class notedetails extends AppCompatActivity {
                 }
             }
         });
+    }
+    @Override
+    protected void onDestroy() {
+        // Shutdown TextToSpeech to release resources
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onDestroy();
     }
 }

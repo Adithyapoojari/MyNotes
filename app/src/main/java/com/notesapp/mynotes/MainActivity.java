@@ -1,6 +1,7 @@
  package com.notesapp.mynotes;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.Query;
     RecyclerView recyclerView;
     ImageButton menuBtn;
     noteAdaptor noteAdaptor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,21 +70,35 @@ import com.google.firebase.firestore.Query;
     }
 
 
-    void showMenu(){//to display menu
-        PopupMenu popupMenu= new PopupMenu(this,menuBtn);
-        popupMenu.getMenu().add("Log Out");
-        popupMenu.show();
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if(item.getTitle().equals("Log Out")){
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(MainActivity.this,login.class));
-                    finish();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-}
+     void showMenu() { // to display menu
+         PopupMenu popupMenu = new PopupMenu(this, menuBtn);
+
+         // Add menu options
+         popupMenu.getMenu().add("Log Out");
+         popupMenu.getMenu().add("Feedback");
+
+         // Show the popup menu
+         popupMenu.show();
+
+         // Handle menu item clicks
+         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+             @Override
+             public boolean onMenuItemClick(MenuItem item) {
+                 if (item.getTitle().equals("Log Out")) {
+                     FirebaseAuth.getInstance().signOut();
+                     startActivity(new Intent(MainActivity.this, login.class));
+                     finish();
+                     return true;
+                 } else if (item.getTitle().equals("Feedback")) {
+                     // Open feedback link
+                     Intent feedbackIntent = new Intent(Intent.ACTION_VIEW,
+                             Uri.parse("https://ewi1f5vz6s8.typeform.com/to/A24zo7TD"));
+                     startActivity(feedbackIntent);
+                     return true;
+                 }
+                 return false;
+             }
+         });
+     }
+
+ }

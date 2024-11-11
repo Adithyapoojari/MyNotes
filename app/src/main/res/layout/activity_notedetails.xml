@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal"
+    android:background="@color/black"
     android:padding="16dp"
     tools:context=".notedetails">
 
@@ -13,83 +13,120 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
+        android:gravity="center"
         android:id="@+id/titleContents">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/page_title"
-            android:text="Add New Note"
-            android:textSize="32sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:typeface="monospace"/>
         <ImageButton
+            android:id="@+id/backBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/saveBtn"
-            android:src="@drawable/done_logo"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/back_logo"
+            app:tint="@color/white"
+            />
+
+        <ImageButton
+            android:id="@+id/saveBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentEnd="true"
+            android:layout_marginEnd="2dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/done_logo"
             android:tooltipText="Save Note"
-            app:tint="@color/white"/>
+            android:scaleType="centerInside"
+            app:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/deleteBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="202dp"
+            android:layout_marginEnd="78dp"
+            android:layout_toStartOf="@+id/saveBtn"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/delete"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:tooltipText="Delete Note"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/shareBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="256dp"
+            android:layout_marginEnd="24dp"
+            android:layout_toStartOf="@+id/saveBtn"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/share_icon"
+            android:tooltipText="Share Note As Text"
+            android:visibility="gone" />
+
 
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_below="@+id/titleContents"
         android:layout_marginVertical="26dp"
-        android:padding="18dp"
+        android:layout_marginTop="29dp"
         android:background="@drawable/rounded_corner"
-        android:backgroundTint="@color/white"
-        android:layout_below="@+id/titleContents">
+        android:backgroundTint="@color/black_2"
+        android:orientation="vertical"
+        android:padding="18dp">
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/notes_title"
-            android:textStyle="bold"
-            android:layout_marginVertical="8dp"
-            android:textColorHint="@color/hint"
-            android:typeface="monospace"
-            android:textSize="22sp"
-            android:padding="12dp"
-            android:textColor="@color/black"
-            android:hint="Title"/>
-        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/contenttext"
-            android:textStyle="normal"
             android:layout_marginVertical="8dp"
-            android:textColorHint="@color/hint"
-            android:typeface="monospace"
-            android:textSize="18sp"
+            android:hint="Title"
+            android:inputType="textCapSentences"
             android:padding="12dp"
-            android:textColor="@color/black"
-            android:minLines="15"
-            android:gravity="top"
-            android:hint="Content Here..."/>
+            android:textColor="@color/white"
+            android:textColorHint="@color/hint"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
 
+        <EditText
+            android:id="@+id/contenttext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:gravity="top"
+            android:hint="Content Here..."
+            android:minLines="15"
+            android:padding="12dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/hint"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:typeface="monospace"
+            android:inputType="textCapSentences|textMultiLine"
+            android:imeOptions="flagNoExtractUi" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/deleteBtn"
-        android:layout_width="match_parent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/voiceBtn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="66dp"
-        android:gravity="center"
-        android:text="Delete Note"
-        android:textColor="@color/red"
-        android:textSize="25sp"
-        android:visibility="gone" />
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/voice_icon"
+        android:background="@color/white"
+        app:maxImageSize="55dp"
+        app:fabSize="normal"
+        android:imeOptions="flagNoExtractUi"
+        android:visibility="gone"/>
 
 </RelativeLayout>
