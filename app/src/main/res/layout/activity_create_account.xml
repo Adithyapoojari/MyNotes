@@ -13,6 +13,7 @@
         android:layout_width="70pt"
         android:layout_height="50pt"
         android:layout_centerHorizontal="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@mipmap/logofinal"
         app:maxImageSize="55dp"
         android:id="@+id/signup_icon"

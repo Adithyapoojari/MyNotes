@@ -42,5 +42,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     //by user dependency
     implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
+    implementation("androidx.biometric:biometric:1.1.0")
+
 
 }

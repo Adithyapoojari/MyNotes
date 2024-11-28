@@ -19,6 +19,7 @@
             android:layout_width="70pt"
             android:layout_height="50pt"
             android:layout_centerHorizontal="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:maxImageSize="55dp"
             android:layout_margin="32dp"
             android:src="@mipmap/logofinal" />
@@ -116,8 +117,8 @@
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:layout_width="50pt"
-                android:layout_height="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/rounded_corner"
                 android:text="Login"
                 android:textColor="@color/black"

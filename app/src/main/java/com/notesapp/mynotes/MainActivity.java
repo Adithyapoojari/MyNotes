@@ -3,16 +3,18 @@
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,12 +23,18 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.Query;
 
+import java.util.concurrent.Executor;
+
  public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton addnoteBtn;
     RecyclerView recyclerView;
     ImageButton menuBtn;
     noteAdaptor noteAdaptor;
+    /*BiometricPrompt biometricPrompt;
+    BiometricPrompt.PromptInfo promptInfo;
+    RelativeLayout mainLayout;*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +42,70 @@ import com.google.firebase.firestore.Query;
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+       // mainLayout = findViewById(R.id.main);
+
         addnoteBtn = findViewById(R.id.addnote_btn);
         recyclerView = findViewById(R.id.recyclerview);
         menuBtn = findViewById(R.id.menuBtn);
+
+        /*BiometricManager biometricManager=BiometricManager.from(this);
+
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG |
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                // Biometric authentication is available and ready to use so no need any action
+                break;
+
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Utility.showToast(this, "No biometric features available on this device");
+                break;
+
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Utility.showToast(this, "Biometric hardware is currently unavailable");
+                break;
+
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                Utility.showToast(this, "No biometric credentials enrolled");
+                break;
+
+            default:
+                Utility.showToast(this, "Biometric authentication is not supported");
+                break;
+        }
+
+
+        Executor executor = ContextCompat.getMainExecutor(this);
+
+        biometricPrompt = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                Toast.makeText(MainActivity.this, "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                Toast.makeText(MainActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
+                mainLayout.setVisibility(RelativeLayout.VISIBLE);
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("My Notes")
+                .setDescription("USE YOUR SCREENLOCK AUTHENTICATIONS")
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG
+                        | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                .build();
+
+        biometricPrompt.authenticate(promptInfo);*/
+
 
         menuBtn.setOnClickListener(v -> showMenu());
         setupRecyclerView();
